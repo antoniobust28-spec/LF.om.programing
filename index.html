@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIFT-FLOW · OMAR · Halterofilia</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:#111}
+  ::-webkit-scrollbar-thumb{background:#e63030}
+  body{background:#0a0a0a;color:#f0f0f0;font-family:'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.02em;min-height:100vh}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  /* TABS */
+  .tabs{display:flex;overflow-x:auto;border-bottom:1px solid #222;background:#0e0e0e;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab-btn{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;font-family:'Barlow Condensed',sans-serif;border-right:1px solid #1a1a1a;min-width:80px;text-align:center;text-transform:uppercase;color:#555;transition:all .2s;white-space:nowrap;border:none;cursor:pointer;background:transparent}
+  .tab-btn.active{background:#e63030;color:#fff}
+  .tab-btn:hover:not(.active){color:#e63030}
+  .day-panel{display:none;padding:18px 14px;animation:fadeIn .3s ease forwards}
+  .day-panel.active{display:block}
+  /* BLOCKS */
+  .block{margin-bottom:18px}
+  .block-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;color:#e63030;font-weight:700;text-transform:uppercase;padding:7px 12px;background:#141414;border-left:3px solid #e63030;margin-bottom:2px}
+  /* MOB LIST */
+  .mob-list{background:#0e0e0e;border:1px solid #1e1e1e;padding:10px 14px}
+  .mob-item{font-size:13px;color:#ccc;padding:5px 0;border-bottom:1px solid #1a1a1a;font-family:'Barlow',sans-serif;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+  .mob-item:last-child{border-bottom:none}
+  .mob-item::before{content:'•';color:#e63030;font-size:16px;line-height:1;flex-shrink:0}
+  /* SETS TABLE */
+  .sets-table{width:100%;border:1px solid #1e1e1e;overflow:hidden}
+  .sets-header{display:grid;grid-template-columns:1fr 60px 60px;background:#141414;padding:8px 12px;font-size:10px;color:#555;letter-spacing:2px;font-weight:700;border-bottom:1px solid #1e1e1e}
+  .set-row{display:grid;grid-template-columns:1fr 60px 60px;padding:9px 12px;border-bottom:1px solid #1a1a1a;align-items:center;transition:background .15s}
+  .set-row:last-child{border-bottom:none}
+  .set-row:hover{background:rgba(230,48,48,.05)}
+  .set-row:nth-child(odd){background:#0e0e0e}
+  .set-row:nth-child(odd):hover{background:rgba(230,48,48,.07)}
+  .set-series{font-size:13px;color:#aaa;font-family:'Barlow',sans-serif}
+  .set-reps{text-align:center;font-size:14px;font-weight:700;color:#e63030;font-family:'Barlow Condensed',sans-serif}
+  .set-pct{text-align:center;font-size:12px;color:#888;font-family:'Barlow',sans-serif}
+  /* RM CARD */
+  .rm-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:18px}
+  .rm-card{background:#0e0e0e;border:1px solid #1e1e1e;border-top:2px solid #e63030;padding:12px}
+  .rm-move{font-size:10px;letter-spacing:2px;color:#e63030;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+  .rm-vals{display:flex;justify-content:space-between;align-items:center;gap:4px}
+  .rm-input{background:#0a0a0a;border:1px solid #2a2a2a;color:#f0f0f0;font-size:18px;font-weight:900;padding:5px 4px;width:68px;font-family:'Barlow Condensed',sans-serif;text-align:center}
+  .rm-input:focus{outline:none;border-color:#e63030}
+  .rm-arrow{font-size:16px;color:#555;flex-shrink:0}
+  .rm-goal-input{background:#0a0a0a;border:1px solid #2a2a2a;color:#e08080;font-size:16px;font-weight:700;padding:5px 4px;width:68px;font-family:'Barlow Condensed',sans-serif;text-align:center}
+  .rm-goal-input:focus{outline:none;border-color:#e63030}
+  /* REGISTRO */
+  .reg-table{width:100%;border:1px solid #1e1e1e;overflow:hidden}
+  .reg-header{display:grid;grid-template-columns:90px 60px 1fr 70px;background:#141414;padding:9px 12px;font-size:9px;color:#555;letter-spacing:1.5px;font-weight:700;border-bottom:1px solid #1e1e1e;text-transform:uppercase}
+  .reg-row{display:grid;grid-template-columns:90px 60px 1fr 70px;padding:11px 12px;border-bottom:1px solid #1a1a1a;align-items:center}
+  .reg-row:last-child{border-bottom:none}
+  .reg-day{font-size:13px;font-weight:600}
+  .reg-input{background:#0a0a0a;border:1px solid #2a2a2a;color:#f0f0f0;font-size:12px;padding:4px 6px;width:100%;font-family:'Barlow',sans-serif;text-align:center}
+  .reg-input:focus{outline:none;border-color:#e63030}
+  .reg-bloque{background:#0a0a0a;border:1px solid #2a2a2a;color:#f0f0f0;font-size:11px;padding:4px 6px;width:100%;font-family:'Barlow',sans-serif}
+  .reg-bloque:focus{outline:none;border-color:#e63030}
+  /* TAGS */
+  .pill{background:rgba(230,48,48,.15);border:1px solid rgba(230,48,48,.4);color:#e63030;font-size:10px;letter-spacing:2px;font-weight:700;padding:3px 8px;text-transform:uppercase;display:inline-block;margin:2px}
+  .tag-badge{background:rgba(230,48,48,.15);border:1px solid #e63030;color:#e63030;padding:5px 12px;font-size:10px;letter-spacing:2px;font-weight:700;text-transform:uppercase}
+  .section-divider{display:flex;align-items:center;gap:10px;padding:6px 12px;background:#111;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;margin:4px 0 14px}
+  .section-divider .line{flex:1;height:1px;background:rgba(230,48,48,.2)}
+  .section-divider span{font-size:9px;letter-spacing:3px;color:#e63030;font-weight:700;text-transform:uppercase}
+  /* SEND BTN */
+  .send-btn{width:100%;background:#e63030;color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:14px;cursor:pointer;margin-top:16px;transition:background .2s}
+  .send-btn:hover{background:#c02020}
+  .send-btn:active{background:#a01818}
+  @media(max-width:420px){
+    .rm-grid{grid-template-columns:1fr}
+    .sets-header,.set-row{grid-template-columns:1fr 50px 50px}
+    .reg-header,.reg-row{grid-template-columns:80px 50px 1fr 60px}
+    .rm-input,.rm-goal-input{width:58px;font-size:15px}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div style="background:linear-gradient(135deg,#0a0a0a,#1a0808,#0a0a0a);border-bottom:2px solid #e63030;padding:22px 16px;text-align:center;position:relative;overflow:hidden">
+  <div style="position:absolute;top:0;right:0;width:180px;height:180px;background:radial-gradient(circle,rgba(230,48,48,.12),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;top:0;left:0;width:140px;height:140px;background:radial-gradient(circle,rgba(230,48,48,.06),transparent 70%);pointer-events:none"></div>
+  <div style="font-size:10px;letter-spacing:4px;color:#e63030;font-weight:700;margin-bottom:6px">LIFT-FLOW · HALTEROFILIA</div>
+  <div style="font-size:36px;font-weight:900;text-transform:uppercase;line-height:1;letter-spacing:3px">OMAR</div>
+  <div style="font-size:12px;color:#777;margin-top:6px;font-family:'Barlow',sans-serif;letter-spacing:1px">Programa de Desarrollo Técnico</div>
+  <div style="font-size:11px;color:#555;margin-top:4px;font-family:'Barlow',sans-serif">INT: 60–80% &nbsp;·&nbsp; VOL: RIR 2–3 / RPE 7–8</div>
+  <div style="margin-top:12px">
+    <span class="pill">Coordinación</span><span class="pill">Técnica</span><span class="pill">Core</span><span class="pill">Recuperación</span><span class="pill">Bajo Volumen</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showDay(0,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">DÍA 1</div>LUN</button>
+  <button class="tab-btn" onclick="showDay(1,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">DÍA 2</div>MAR</button>
+  <button class="tab-btn" onclick="showDay(2,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">DÍA 3</div>MIÉ</button>
+  <button class="tab-btn" onclick="showDay(3,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">DÍA 4</div>JUE</button>
+  <button class="tab-btn" onclick="showDay(4,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">DÍA 5</div>VIE</button>
+  <button class="tab-btn" onclick="showDay(5,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">RM</div>METAS</button>
+  <button class="tab-btn" onclick="showDay(6,this)"><div style="font-size:9px;opacity:.6;letter-spacing:2px">LOG</div>REGISTRO</button>
+</div>
+
+<!-- ==================== DÍA 1 ==================== -->
+<div id="day-0" class="day-panel active">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700">DÍA 1 · LUNES</div>
+      <div style="font-size:20px;font-weight:900;text-transform:uppercase;line-height:1.1">HANG POWER SNATCH · PC+PPP · SN PULL</div>
+    </div>
+    <span class="tag-badge">COORDINACIÓN + TÉCNICA</span>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Activaciones</div>
+    <div class="mob-list">
+      <div class="mob-item">3×15sg — Plank con peso</div>
+      <div class="mob-item">3×10sg/10sg — Bird dog alto / liga</div>
+      <div class="mob-item">3×10/10sg — Puente a un pie</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Calentamiento / Estabilidad</div>
+    <div class="mob-list">
+      <div class="mob-item">2×5 — Salto con peso</div>
+      <div class="mob-item">2×3 — Tall snatch</div>
+      <div class="mob-item">2×3 — Muscle snatch 40%</div>
+      <div class="mob-item">2×3 — Tall snatch 40%</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="line"></div><span>ESPECÍFICOS</span><div class="line"></div></div>
+
+  <div class="block">
+    <div class="block-title">A) Hang Power Snatch (sin desplazar)</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">4</div><div class="set-pct">50%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">4</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Serie 3</div><div class="set-reps">3</div><div class="set-pct">65%</div></div>
+      <div class="set-row"><div class="set-series">Series 4–6</div><div class="set-reps">3</div><div class="set-pct">70%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">B) Power Clean + Power Push Press</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">3</div><div class="set-pct">50%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">3</div><div class="set-pct">55%</div></div>
+      <div class="set-row"><div class="set-series">Series 3–5</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">C) Déficit Snatch Pull</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–4</div><div class="set-reps">4</div><div class="set-pct">90%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Físico</div>
+    <div class="mob-list">
+      <div class="mob-item">3×10 — Back strict press</div>
+      <div class="mob-item">2×10/10 — Step ups (altura baja)</div>
+      <div class="mob-item">4×40sg — Plancha baja con peso</div>
+      <div class="mob-item">5–10 min — Movilidad</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DÍA 2 ==================== -->
+<div id="day-1" class="day-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700">DÍA 2 · MARTES</div>
+      <div style="font-size:20px;font-weight:900;text-transform:uppercase;line-height:1.1">HANG MUSCLE SN · BACK SQUAT · CLEAN PULL</div>
+    </div>
+    <span class="tag-badge">TÉCNICA + ESTABILIDAD</span>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Activación</div>
+    <div class="mob-list">
+      <div class="mob-item">3×20sg — Extensión lumbar estático o Superman</div>
+      <div class="mob-item">3×10/10 — Hip thrust a un pie</div>
+      <div class="mob-item">2×20/20sg — Bird dog alto</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Calentamiento</div>
+    <div class="mob-list">
+      <div class="mob-item">2×6 — Box jump altura de cadera</div>
+      <div class="mob-item">3×3 — Tall snatch 45%</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="line"></div><span>ESPECÍFICOS</span><div class="line"></div></div>
+
+  <div class="block">
+    <div class="block-title">A) Hang Muscle Snatch</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">3</div><div class="set-pct">50%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">3</div><div class="set-pct">55%</div></div>
+      <div class="set-row"><div class="set-series">Serie 3</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Series 4–6</div><div class="set-reps">3</div><div class="set-pct">65%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">B) Back Squat / Sobre banco</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">3</div><div class="set-pct">70%</div></div>
+      <div class="set-row"><div class="set-series">Serie 3</div><div class="set-reps">3</div><div class="set-pct">75%</div></div>
+      <div class="set-row"><div class="set-series">Serie 4</div><div class="set-reps">3</div><div class="set-pct">80%</div></div>
+      <div class="set-row"><div class="set-series">Series 5–7</div><div class="set-reps">3</div><div class="set-pct">83%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">C) Clean Pull (soportes)</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–4</div><div class="set-reps">4</div><div class="set-pct">90%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Físico</div>
+    <div class="mob-list">
+      <div class="mob-item">3×10/10 — Press Pallof</div>
+      <div class="mob-item">3×12 — Peso muerto rumano</div>
+      <div class="mob-item">3×10 — Extensiones lumbares</div>
+      <div class="mob-item">10–15 min — Movilidad</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DÍA 3 ==================== -->
+<div id="day-2" class="day-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700">DÍA 3 · MIÉRCOLES</div>
+      <div style="font-size:20px;font-weight:900;text-transform:uppercase;line-height:1.1">TEMPO SN · MUSCLE CLEAN · DÉFICIT SN PULL</div>
+    </div>
+    <span class="tag-badge">TÉCNICA PROGRESIVA</span>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Activación</div>
+    <div class="mob-list">
+      <div class="mob-item">3×10/10sg — Bird dog alto</div>
+      <div class="mob-item">3×10/10sg — Squat hold a un pie</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Calentamiento / Estabilidad</div>
+    <div class="mob-list">
+      <div class="mob-item">2×8 — Salto con peso</div>
+      <div class="mob-item">2×3 — Drop snatch</div>
+      <div class="mob-item">3×3/3 — O.H.S (KB)</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="line"></div><span>ESPECÍFICOS</span><div class="line"></div></div>
+
+  <div class="block">
+    <div class="block-title">A) Tempo Power Snatch (% de snatch)</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">3</div><div class="set-pct">55%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Series 3–6</div><div class="set-reps">3</div><div class="set-pct">65%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">B) Muscle Clean</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">3</div><div class="set-pct">50%</div></div>
+      <div class="set-row"><div class="set-series">Series 2–5</div><div class="set-reps">3</div><div class="set-pct">55%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">C) Déficit Snatch Pull</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–4</div><div class="set-reps">4</div><div class="set-pct">90%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Físico</div>
+    <div class="mob-list">
+      <div class="mob-item">3×10 — Elevaciones en "Y, T"</div>
+      <div class="mob-item">3×10 — Strict press (mancuernas)</div>
+      <div class="mob-item">3×10 — Strict T2B</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DÍA 4 ==================== -->
+<div id="day-3" class="day-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700">DÍA 4 · JUEVES</div>
+      <div style="font-size:20px;font-weight:900;text-transform:uppercase;line-height:1.1">OHS · FRONT SQUAT · DÉFICIT CLEAN PULL</div>
+    </div>
+    <span class="tag-badge">ESTABILIDAD + CORE</span>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Activación</div>
+    <div class="mob-list">
+      <div class="mob-item">3×20sg — Extensión lumbar estático o Superman</div>
+      <div class="mob-item">3×10/10 — Hip thrust a un pie</div>
+      <div class="mob-item">2×20/20sg — Bird dog alto</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Calentamiento</div>
+    <div class="mob-list">
+      <div class="mob-item">2×5/5 — Lunge jump con peso</div>
+      <div class="mob-item">3×3 — Tall muscle snatch + Sott press</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="line"></div><span>ESPECÍFICOS</span><div class="line"></div></div>
+
+  <div class="block">
+    <div class="block-title">A) O.H.S</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">4</div><div class="set-pct">50%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">3</div><div class="set-pct">55%</div></div>
+      <div class="set-row"><div class="set-series">Serie 3</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Series 4–6</div><div class="set-reps">3</div><div class="set-pct">65%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">B) Front Squat</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">4</div><div class="set-pct">50%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">4</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Series 3–6</div><div class="set-reps">3</div><div class="set-pct">68%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">C) Déficit Clean Pull (bajo rodillas)</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–4</div><div class="set-reps">4</div><div class="set-pct">90%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Físico</div>
+    <div class="mob-list">
+      <div class="mob-item">5×20 — V ups</div>
+      <div class="mob-item">4×10 — Squat en sumo (déficit)</div>
+      <div class="mob-item">10–15 min — Movilidad</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DÍA 5 ==================== -->
+<div id="day-4" class="day-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700">DÍA 5 · VIERNES</div>
+      <div style="font-size:20px;font-weight:900;text-transform:uppercase;line-height:1.1">HANG SNATCH · HPC · CLEAN PULL</div>
+    </div>
+    <span class="tag-badge">BAJO VOL / RECUPERACIÓN</span>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Activación</div>
+    <div class="mob-list">
+      <div class="mob-item">3×20sg — Extensión lumbar estático o Superman</div>
+      <div class="mob-item">3×10/10 — Hip thrust a un pie</div>
+      <div class="mob-item">2×20/20sg — Bird dog alto</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Calentamiento</div>
+    <div class="mob-list">
+      <div class="mob-item">3×5 — Salto con peso</div>
+      <div class="mob-item">3×(3+3) — Tall squat snatch + drop snatch</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="line"></div><span>ESPECÍFICOS</span><div class="line"></div></div>
+
+  <div class="block">
+    <div class="block-title">A) Hang Snatch</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–2</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Series 3–4</div><div class="set-reps">3</div><div class="set-pct">65%</div></div>
+      <div class="set-row"><div class="set-series">Series 5–7</div><div class="set-reps">3</div><div class="set-pct">70%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">B) Hang Snatch Pull</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–3</div><div class="set-reps">3</div><div class="set-pct">90%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">C) Hang Power Clean</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Serie 1</div><div class="set-reps">3</div><div class="set-pct">60%</div></div>
+      <div class="set-row"><div class="set-series">Serie 2</div><div class="set-reps">3</div><div class="set-pct">65%</div></div>
+      <div class="set-row"><div class="set-series">Series 3–5</div><div class="set-reps">3</div><div class="set-pct">70%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">D) Clean Pull</div>
+    <div class="sets-table">
+      <div class="sets-header"><span>SERIE</span><span style="text-align:center">REPS</span><span style="text-align:center">%RM</span></div>
+      <div class="set-row"><div class="set-series">Series 1–3</div><div class="set-reps">3</div><div class="set-pct">90%</div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-title">Físico</div>
+    <div class="mob-list">
+      <div class="mob-item">3×10 — Nados en Y</div>
+      <div class="mob-item">4×10 — Extensiones lumbares</div>
+      <div class="mob-item">2×10/10 — Step ups</div>
+      <div class="mob-item">10–15 min — Movilidad</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== METAS RM ==================== -->
+<div id="day-5" class="day-panel">
+  <div style="margin-bottom:16px">
+    <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700;margin-bottom:4px">MARCAS PERSONALES · OMAR</div>
+    <div style="font-size:22px;font-weight:900;text-transform:uppercase">RMs ACTUALES → METAS</div>
+    <div style="font-size:12px;color:#888;font-family:'Barlow',sans-serif;margin-top:4px">Período: 2 meses · Ingresa tus valores</div>
+  </div>
+
+  <div class="rm-grid">
+    <div class="rm-card">
+      <div class="rm-move">Snatch</div>
+      <div class="rm-vals">
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">ACTUAL (kg)</div>
+          <input class="rm-input" id="rm-sn-a" type="number" placeholder="—" min="0">
+        </div>
+        <div class="rm-arrow">→</div>
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">META (kg)</div>
+          <input class="rm-goal-input" id="rm-sn-m" type="number" placeholder="—" min="0">
+        </div>
+      </div>
+      <div style="font-size:10px;color:#444;margin-top:8px;font-family:'Barlow',sans-serif">2 meses</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-move">Clean &amp; Jerk</div>
+      <div class="rm-vals">
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">ACTUAL (kg)</div>
+          <input class="rm-input" id="rm-cj-a" type="number" placeholder="—" min="0">
+        </div>
+        <div class="rm-arrow">→</div>
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">META (kg)</div>
+          <input class="rm-goal-input" id="rm-cj-m" type="number" placeholder="—" min="0">
+        </div>
+      </div>
+      <div style="font-size:10px;color:#444;margin-top:8px;font-family:'Barlow',sans-serif">2 meses</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-move">Front Squat</div>
+      <div class="rm-vals">
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">ACTUAL (kg)</div>
+          <input class="rm-input" id="rm-fs-a" type="number" placeholder="—" min="0">
+        </div>
+        <div class="rm-arrow">→</div>
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">META (kg)</div>
+          <input class="rm-goal-input" id="rm-fs-m" type="number" placeholder="—" min="0">
+        </div>
+      </div>
+      <div style="font-size:10px;color:#444;margin-top:8px;font-family:'Barlow',sans-serif">2 meses</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-move">Back Squat</div>
+      <div class="rm-vals">
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">ACTUAL (kg)</div>
+          <input class="rm-input" id="rm-bs-a" type="number" placeholder="—" min="0">
+        </div>
+        <div class="rm-arrow">→</div>
+        <div>
+          <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">META (kg)</div>
+          <input class="rm-goal-input" id="rm-bs-m" type="number" placeholder="—" min="0">
+        </div>
+      </div>
+      <div style="font-size:10px;color:#444;margin-top:8px;font-family:'Barlow',sans-serif">2 meses</div>
+    </div>
+  </div>
+
+  <div style="background:#111;border:1px solid #2a2a2a;border-left:3px solid #e63030;padding:14px 16px;margin-top:4px">
+    <div style="font-size:12px;color:#e63030;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">OBJETIVOS DEL BLOQUE</div>
+    <div class="mob-list" style="border:none;padding:0;background:transparent">
+      <div class="mob-item">Mejorar la coordinación</div>
+      <div class="mob-item">Énfasis en técnica — enfoque técnico progresivo</div>
+      <div class="mob-item">Énfasis en estabilidad (core)</div>
+      <div class="mob-item">Ejercicios de recuperación</div>
+      <div class="mob-item">Bajo de volumen e intensidad</div>
+    </div>
+    <div style="font-size:11px;color:#444;margin-top:10px;font-family:'Barlow',sans-serif">INT: 60–80% &nbsp;·&nbsp; RIR 2–3 / RPE 7–8</div>
+  </div>
+</div>
+
+<!-- ==================== REGISTRO SEMANAL ==================== -->
+<div id="day-6" class="day-panel">
+  <div style="margin-bottom:16px">
+    <div style="font-size:10px;color:#e63030;letter-spacing:3px;font-weight:700;margin-bottom:4px">OMAR · SEMANA</div>
+    <div style="font-size:22px;font-weight:900;text-transform:uppercase">REGISTRO SEMANAL</div>
+    <div style="font-size:12px;color:#888;font-family:'Barlow',sans-serif;margin-top:4px">INT: 60–80% &nbsp;·&nbsp; VOL: RIR 2–3 / RPE 7–8</div>
+  </div>
+
+  <div class="reg-table">
+    <div class="reg-header">
+      <span>DÍA</span>
+      <span style="text-align:center">FATIGA<br>1–10</span>
+      <span style="text-align:center;padding-left:6px">BLOQUE MAYOR FATIGA</span>
+      <span style="text-align:center">MOTIVACIÓN<br>1–10</span>
+    </div>
+    <div class="reg-row" style="background:#0e0e0e">
+      <div class="reg-day">Lunes</div>
+      <div style="text-align:center"><input class="reg-input" id="f-lun" type="number" min="1" max="10" placeholder="–"></div>
+      <div style="padding:0 6px"><input class="reg-bloque" id="b-lun" type="text" placeholder="ej. A, B, C…"></div>
+      <div style="text-align:center"><input class="reg-input" id="m-lun" type="number" min="1" max="10" placeholder="–"></div>
+    </div>
+    <div class="reg-row">
+      <div class="reg-day">Martes</div>
+      <div style="text-align:center"><input class="reg-input" id="f-mar" type="number" min="1" max="10" placeholder="–"></div>
+      <div style="padding:0 6px"><input class="reg-bloque" id="b-mar" type="text" placeholder="ej. A, B, C…"></div>
+      <div style="text-align:center"><input class="reg-input" id="m-mar" type="number" min="1" max="10" placeholder="–"></div>
+    </div>
+    <div class="reg-row" style="background:#0e0e0e">
+      <div class="reg-day">Miércoles</div>
+      <div style="text-align:center"><input class="reg-input" id="f-mie" type="number" min="1" max="10" placeholder="–"></div>
+      <div style="padding:0 6px"><input class="reg-bloque" id="b-mie" type="text" placeholder="ej. A, B, C…"></div>
+      <div style="text-align:center"><input class="reg-input" id="m-mie" type="number" min="1" max="10" placeholder="–"></div>
+    </div>
+    <div class="reg-row">
+      <div class="reg-day">Jueves</div>
+      <div style="text-align:center"><input class="reg-input" id="f-jue" type="number" min="1" max="10" placeholder="–"></div>
+      <div style="padding:0 6px"><input class="reg-bloque" id="b-jue" type="text" placeholder="ej. A, B, C…"></div>
+      <div style="text-align:center"><input class="reg-input" id="m-jue" type="number" min="1" max="10" placeholder="–"></div>
+    </div>
+    <div class="reg-row" style="background:#0e0e0e">
+      <div class="reg-day">Viernes</div>
+      <div style="text-align:center"><input class="reg-input" id="f-vie" type="number" min="1" max="10" placeholder="–"></div>
+      <div style="padding:0 6px"><input class="reg-bloque" id="b-vie" type="text" placeholder="ej. A, B, C…"></div>
+      <div style="text-align:center"><input class="reg-input" id="m-vie" type="number" min="1" max="10" placeholder="–"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;background:#111;border:1px solid #1e1e1e;padding:12px 14px">
+    <div style="font-size:10px;color:#e63030;letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:10px">RMs de la semana &amp; Notas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div>
+        <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">SNATCH (kg)</div>
+        <input class="reg-bloque" id="reg-sn" type="text" placeholder="kg logrado…" style="width:100%">
+      </div>
+      <div>
+        <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">CLEAN &amp; JERK (kg)</div>
+        <input class="reg-bloque" id="reg-cj" type="text" placeholder="kg logrado…" style="width:100%">
+      </div>
+    </div>
+    <div>
+      <div style="font-size:9px;color:#555;letter-spacing:1px;margin-bottom:3px">NOTAS / OBSERVACIONES</div>
+      <textarea class="reg-bloque" id="reg-notas" rows="3" placeholder="Técnica, sensaciones, observaciones del bloque…" style="width:100%;resize:vertical;font-family:'Barlow',sans-serif;font-size:11px;line-height:1.5;padding:6px"></textarea>
+    </div>
+  </div>
+
+  <button class="send-btn" onclick="enviarRegistro()">&#9993; ENVIAR REGISTRO A LIFT-FLOW</button>
+
+  <div style="margin-top:10px;font-size:11px;color:#444;font-family:'Barlow',sans-serif;text-align:center;line-height:1.6">
+    Se abrirá tu cliente de correo con el registro completo listo para enviar a liftflow360@gmail.com
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="border-top:1px solid #1a1a1a;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+  <span style="font-size:11px;color:#333;letter-spacing:3px;font-weight:700">LIFT-FLOW</span>
+  <span style="font-size:10px;color:#333;font-family:'Barlow',sans-serif">Levántate. Fluye. Repite.</span>
+</div>
+
+<script>
+function showDay(idx, btn) {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('day-' + idx).classList.add('active');
+  btn.classList.add('active');
+}
+
+function v(id) {
+  var el = document.getElementById(id);
+  return (el && el.value) ? el.value : '—';
+}
+
+function enviarRegistro() {
+  var fecha = new Date().toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  var body = [
+    'REGISTRO SEMANAL · OMAR · LIFT-FLOW',
+    '=====================================',
+    'Fecha: ' + fecha,
+    'INT: 60-80% | VOL: RIR 2-3 / RPE 7-8',
+    '',
+    'SEGUIMIENTO DIARIO',
+    '------------------',
+    'DÍA         FATIGA   BLOQUE MAYOR FATIGA   MOTIVACIÓN',
+    'Lunes       ' + v('f-lun') + '        ' + v('b-lun') + '                     ' + v('m-lun'),
+    'Martes      ' + v('f-mar') + '        ' + v('b-mar') + '                     ' + v('m-mar'),
+    'Miércoles   ' + v('f-mie') + '        ' + v('b-mie') + '                     ' + v('m-mie'),
+    'Jueves      ' + v('f-jue') + '        ' + v('b-jue') + '                     ' + v('m-jue'),
+    'Viernes     ' + v('f-vie') + '        ' + v('b-vie') + '                     ' + v('m-vie'),
+    '',
+    'RMs DE LA SEMANA',
+    '----------------',
+    'Snatch       : ' + v('reg-sn') + ' kg',
+    'Clean & Jerk : ' + v('reg-cj') + ' kg',
+    '',
+    'NOTAS / OBSERVACIONES',
+    '---------------------',
+    v('reg-notas'),
+    '',
+    'RMs ACTUALES / METAS (2 meses)',
+    '================================',
+    'Snatch       : ' + v('rm-sn-a') + ' kg  →  meta: ' + v('rm-sn-m') + ' kg',
+    'Clean & Jerk : ' + v('rm-cj-a') + ' kg  →  meta: ' + v('rm-cj-m') + ' kg',
+    'Front Squat  : ' + v('rm-fs-a') + ' kg  →  meta: ' + v('rm-fs-m') + ' kg',
+    'Back Squat   : ' + v('rm-bs-a') + ' kg  →  meta: ' + v('rm-bs-m') + ' kg',
+    '',
+    '=====================================',
+    'LIFT-FLOW · Levántate. Fluye. Repite.'
+  ].join('\n');
+
+  var subject = 'Registro Semanal OMAR · LIFT-FLOW · ' + new Date().toLocaleDateString('es-MX');
+  window.location.href = 'mailto:liftflow360@gmail.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+}
+</script>
+</body>
+</html>
